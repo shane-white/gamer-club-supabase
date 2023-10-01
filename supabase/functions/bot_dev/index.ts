@@ -73,7 +73,7 @@ async function home(request: Request) {
       return json({
         type: 7,
         data: {
-          content: `${member.username} voted for ${data.values[0]}! as their top choice!`,
+          content: `${member.user.global_name} voted for ${data.values[0]}! as their top choice!`,
         },
       });
     }
@@ -81,7 +81,7 @@ async function home(request: Request) {
       return json({
         type: 7,
         data: {
-          content: `${member.username} voted for ${data.values[0]}! as their second choice!`,
+          content: `${member.user.global_name} voted for ${data.values[0]}! as their second choice!`,
         },
       });
     }
@@ -89,7 +89,7 @@ async function home(request: Request) {
       return json({
         type: 7,
         data: {
-          content: `${member.username} voted for ${data.values[0]}! as their third choice!`,
+          content: `${member.user.global_name} voted for ${data.values[0]}! as their third choice!`,
         },
       });
     }
