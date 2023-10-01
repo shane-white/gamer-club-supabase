@@ -5,8 +5,12 @@ import { json, serve, validateRequest } from "sift";
 // TweetNaCl is a cryptography library that we use to verify requests
 // from Discord.
 import nacl from "nacl";
-import { nominateGame, voteForGame } from "../_shared/commands.ts";
-import J from "https://esm.sh/v127/@supabase/realtime-js@2.7.3/denonext/dist/module/RealtimeChannel.js";
+import {
+  handleVoting,
+  listGames,
+  nominateGame,
+  voteForGame,
+} from "../_shared/commands.ts";
 
 enum DiscordCommandType {
   Ping = 1,
@@ -47,7 +51,7 @@ async function home(request: Request) {
   }
 
   const { type = 0, data = { options: [] }, member } = JSON.parse(body);
-  console.log("Type: " + type);
+  console.log(body);
   // Discord performs Ping interactions to test our application.
   // Type 1 in a request implies a Ping interaction.
   if (type === DiscordCommandType.Ping) {
@@ -64,35 +68,28 @@ async function home(request: Request) {
       return await nominateGame(data, member);
     }
     if (data.name === "vote") {
-      return await voteForGame(data, member);
+      console.log("user: " + member.user.username);
+      if (
+        String(member.user.username) === "turbo_puns" ||
+        String(member.user.username) === "thecutout"
+      ) {
+        return await voteForGame();
+      }
+      return json({
+        type: 4,
+        data: {
+          content: "You are not allowed to start a vote!",
+        },
+      });
+    }
+    if (data.name === "gc-games") {
+      return await listGames();
     }
   }
 
+  // if the request type is a message component, it's someone voting
   if (type === DiscordCommandType.MessageComponent) {
-    if (data.custom_id === "vote_1_select") {
-      return json({
-        type: 7,
-        data: {
-          content: `${member.user.global_name} voted for ${data.values[0]}! as their top choice!`,
-        },
-      });
-    }
-    if (data.custom_id === "vote_2_select") {
-      return json({
-        type: 7,
-        data: {
-          content: `${member.user.global_name} voted for ${data.values[0]}! as their second choice!`,
-        },
-      });
-    }
-    if (data.custom_id === "vote_3_select") {
-      return json({
-        type: 7,
-        data: {
-          content: `${member.user.global_name} voted for ${data.values[0]}! as their third choice!`,
-        },
-      });
-    }
+    return await handleVoting(data, member);
   }
 
   // We will return a bad request error as a valid Discord request
