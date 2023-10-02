@@ -19,6 +19,28 @@ const { data: nominations, error: gameListError } = await supabase
   .select("record_id, Name")
   .contains("Month", [currentMonth]);
 
+const calculateVoteScores = (allVotes: any) => {
+  const voteScores = nominations!.map((game: any) => ({
+    gameId: game.record_id,
+    gameName: game.Name,
+    score: 0,
+  }));
+
+  allVotes!.forEach((vote: any) => {
+    if (vote.vote1) {
+      voteScores.find((score: any) => score.gameId === vote.vote1)!.score += 3;
+    }
+    if (vote.vote2) {
+      voteScores.find((score: any) => score.gameId === vote.vote2)!.score += 2;
+    }
+    if (vote.vote3) {
+      voteScores.find((score: any) => score.gameId === vote.vote3)!.score += 1;
+    }
+  });
+
+  return voteScores;
+};
+
 export const listGames = async () => {
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
   return json({
@@ -68,16 +90,15 @@ export const handleVoting = async (data: any, member: any) => {
 
   if (data.custom_id === "vote_1_select") {
     // find the vote id of the game they voted for
-    const vote1GameId = nominations!.find(
+    const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    console.log(vote1GameId);
     const { data: upsertObj, error } = await supabase
       .from("new_votes")
       .upsert([
         {
           discord_user: member.user.username,
-          vote1: vote1GameId,
+          vote1: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -91,16 +112,16 @@ export const handleVoting = async (data: any, member: any) => {
   }
   if (data.custom_id === "vote_2_select") {
     // find the vote id of the game they voted for
-    const vote1GameId = nominations!.find(
+    const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    console.log(vote1GameId);
+    console.log(voteGameId);
     const { data: upsertObj, error } = await supabase
       .from("new_votes")
       .upsert([
         {
           discord_user: member.user.username,
-          vote2: vote1GameId,
+          vote2: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -113,16 +134,16 @@ export const handleVoting = async (data: any, member: any) => {
   }
   if (data.custom_id === "vote_3_select") {
     // find the vote id of the game they voted for
-    const vote1GameId = nominations!.find(
+    const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    console.log(vote1GameId);
+    console.log(voteGameId);
     const { data: upsertObj, error } = await supabase
       .from("new_votes")
       .upsert([
         {
           discord_user: member.user.username,
-          vote3: vote1GameId,
+          vote3: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -134,10 +155,22 @@ export const handleVoting = async (data: any, member: any) => {
     });
   }
   if (data.custom_id === "vote_submit") {
+    const { data: allVotes, error: allVoteError } = await supabase
+      .from("new_votes")
+      .select("vote1, vote2, vote3")
+      .eq("vote_month", currentMonth);
+    const voteScores = calculateVoteScores(allVotes!).sort(
+      (a: any, b: any) => b.score - a.score
+    );
+
     return json({
       type: 7,
       data: {
-        content: `Thanks for voting, ${member.user.global_name}!`,
+        content: `Thanks for voting, ${
+          member.user.global_name
+        }! \n Here are the current vote scores: \n\n${voteScores
+          .map((vote) => vote.score + ": " + vote.gameName)
+          .join("\n")}`,
       },
     });
   }
