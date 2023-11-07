@@ -255,3 +255,25 @@ export const voteForGame = async () => {
     },
   });
 };
+
+export const vetoGame = async () => async (command: any, member: any) => {
+  const gameName = command.options.find(
+    (option: { name: string; value: string }) => option.name === "game_name"
+  );
+
+  let message = `${member.user.global_name} has vetoed ${gameName.value} for ${currentMonth}!`;
+
+  const { data, error } = await supabase
+    .from("Game Nominations")
+    .delete()
+    .eq('Name', gameName.value)
+
+  return json({
+    // Type 4 responds with the below message retaining the user's
+    // input at the top.
+    type: 4,
+    data: {
+      content: message,
+    },
+  });
+};

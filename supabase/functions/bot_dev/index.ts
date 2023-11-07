@@ -9,8 +9,10 @@ import {
   handleVoting,
   listGames,
   nominateGame,
+  vetoGame,
   voteForGame,
 } from "../_shared/commands.ts";
+import { adminWrapper } from "../_shared/auth.ts";
 
 enum DiscordCommandType {
   Ping = 1,
@@ -69,18 +71,11 @@ async function home(request: Request) {
     }
     if (data.name === "vote") {
       console.log("user: " + member.user.username);
-      if (
-        String(member.user.username) === "turbo_puns" ||
-        String(member.user.username) === "thecutout"
-      ) {
-        return await voteForGame();
-      }
-      return json({
-        type: 4,
-        data: {
-          content: "You are not allowed to start a vote!",
-        },
-      });
+      adminWrapper(member.user.username, voteForGame)
+    }
+    if (data.name === "veto") {
+      console.log("user: " + member.user.username);
+      adminWrapper(member.user.username, vetoGame)
     }
     if (data.name === "gc-games") {
       return await listGames();
