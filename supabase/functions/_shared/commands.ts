@@ -6,7 +6,7 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_ANON_KEY")!
 );
 
-const { data, error: monthEror } = await supabase
+const { data, error: monthError } = await supabase
   .from("Months")
   .select("name")
   .eq("is_current", true);
@@ -256,7 +256,7 @@ export const voteForGame = async () => {
   });
 };
 
-export const vetoGame = async () => async (command: any, member: any) => {
+export const vetoGame = async (command: any, member: any) => {
   const gameName = command.options.find(
     (option: { name: string; value: string }) => option.name === "game_name"
   );
