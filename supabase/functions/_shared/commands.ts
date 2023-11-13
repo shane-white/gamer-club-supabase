@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { json } from "sift";
 import { createClient } from "supabase";
 
@@ -6,15 +7,15 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_ANON_KEY")!
 );
 
-const { data, error: monthError } = await supabase
+const { data: monthData, error: _monthError } = await supabase
   .from("Months")
   .select("name")
   .eq("is_current", true);
 //console.log(JSON.stringify(data));
 
-const currentMonth = data![0].name;
+const currentMonth = monthData![0].name;
 
-const { data: nominations, error: gameListError } = await supabase
+const { data: nominations, error: _gameListError } = await supabase
   .from("Game Nominations")
   .select("record_id, Name")
   .contains("Month", [currentMonth]);
@@ -41,7 +42,7 @@ const calculateVoteScores = (allVotes: any) => {
   return voteScores;
 };
 
-export const listGames = async () => {
+export const listGames = () => {
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
   return json({
     // Type 4 responds with the below message retaining the user's
@@ -68,7 +69,7 @@ export const nominateGame = async (command: any, member: any) => {
     message += ` Here's the trailer: ${trailer.value}`;
   }
 
-  const { data, error } = await supabase
+  const { data: _data, error: _error } = await supabase
     .from("Game Nominations")
     .insert([{ Name: gameName.value, Trailer: trailer, Month: [currentMonth] }])
     .select();
@@ -93,7 +94,7 @@ export const handleVoting = async (data: any, member: any) => {
     const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    const { data: upsertObj, error } = await supabase
+    const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
         {
@@ -116,7 +117,7 @@ export const handleVoting = async (data: any, member: any) => {
       (game: any) => game.Name === data.values[0]
     )!.record_id;
     console.log(voteGameId);
-    const { data: upsertObj, error } = await supabase
+    const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
         {
@@ -138,7 +139,7 @@ export const handleVoting = async (data: any, member: any) => {
       (game: any) => game.Name === data.values[0]
     )!.record_id;
     console.log(voteGameId);
-    const { data: upsertObj, error } = await supabase
+    const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
         {
@@ -155,7 +156,7 @@ export const handleVoting = async (data: any, member: any) => {
     });
   }
   if (data.custom_id === "vote_submit") {
-    const { data: allVotes, error: allVoteError } = await supabase
+    const { data: allVotes, error: _allVoteError } = await supabase
       .from("new_votes")
       .select("vote1, vote2, vote3")
       .eq("vote_month", currentMonth);
@@ -177,7 +178,7 @@ export const handleVoting = async (data: any, member: any) => {
   return json({ error: "bad component interaction" }, { status: 400 });
 };
 
-export const voteForGame = async () => {
+export const voteForGame = () => {
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
   const gameOptions = nominatedGameNames.map((gameName: string) => ({
     label: gameName,
@@ -261,16 +262,35 @@ export const vetoGame = async (command: any, member: any) => {
     (option: { name: string; value: string }) => option.name === "game_name"
   );
 
-  let message = `${member.user.global_name} has vetoed ${gameName.value} for ${currentMonth}!`;
+  const message = `${member.user.global_name} has vetoed ${gameName.value} for ${currentMonth}!`;
 
-  const { data, error } = await supabase
+  const { data: deleteData, error: deleteError } = await supabase
     .from("Game Nominations")
     .delete()
-    .eq('Name', gameName.value)
+    .eq("Name", gameName.value)
+    .contains("Month", [currentMonth])
+    .select();
 
+  if (deleteError) {
+    console.log(deleteError);
+    return json({
+      // Type 4 responds with the below message retaining the user's
+      // input at the top.
+      type: 4,
+      data: {
+        content: "Something went wrong!",
+      },
+    });
+  }
+  if (deleteData.length === 0) {
+    return json({
+      type: 4,
+      data: {
+        content: `${gameName.value} could not be found to be removed.`,
+      },
+    });
+  }
   return json({
-    // Type 4 responds with the below message retaining the user's
-    // input at the top.
     type: 4,
     data: {
       content: message,

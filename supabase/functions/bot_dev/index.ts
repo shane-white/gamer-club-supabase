@@ -71,11 +71,13 @@ async function home(request: Request) {
     }
     if (data.name === "vote") {
       console.log("user: " + member.user.username);
-      return await adminWrapper(member.user.username, voteForGame)
+      const voteCommand = adminWrapper(member.user.username, voteForGame)
+      return (await voteCommand)()
     }
     if (data.name === "veto") {
       console.log("user: " + member.user.username);
-      return await adminWrapper(member.user.username, vetoGame)
+      const vetoCommand = adminWrapper(member.user.username, vetoGame)
+      return (await vetoCommand)(data, member)
     }
     if (data.name === "gc-games") {
       return await listGames();
