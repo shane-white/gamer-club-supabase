@@ -171,7 +171,8 @@ export const handleVoting = async (data: any, member: any) => {
           member.user.global_name
         }! \n Here are the current vote scores: \n\n${voteScores
           .map((vote) => vote.score + ": " + vote.gameName)
-          .join("\n")}`,
+          .join("\n")}
+          \n Remember, choosing a game in a dropdown records that vote, but you can change it at any time.`,
       },
     });
   }
@@ -206,7 +207,8 @@ export const voteForGame = () => {
     type: 4,
 
     data: {
-      content: "Vote for your top games!",
+      content:
+        "Vote for your top games! \n Remember, choosing a game in a dropdown records that vote, but you can change it at any time.",
       components: [
         {
           type: 1,
@@ -248,7 +250,7 @@ export const voteForGame = () => {
               type: 2,
               style: 1,
               custom_id: "vote_submit",
-              label: "Submit Votes",
+              label: "Update Vote Scores",
             },
           ],
         },
