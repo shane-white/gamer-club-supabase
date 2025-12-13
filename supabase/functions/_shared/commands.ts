@@ -9,11 +9,13 @@ const supabase = createClient(
 
 const { data: monthData, error: _monthError } = await supabase
   .from("Months")
-  .select("name")
+  .select("name, is_voting_open, is_noms_open")
   .eq("is_current", true);
 //console.log(JSON.stringify(data));
 
 const currentMonth = monthData![0].name;
+const isVotingOpen = monthData![0].is_voting_open;
+const isNominationsOpen = monthData![0].is_noms_open;
 
 const { data: nominations, error: _gameListError } = await supabase
   .from("Game Nominations")
@@ -42,6 +44,31 @@ const calculateVoteScores = (allVotes: any) => {
   return voteScores;
 };
 
+export const endVote = async () => {
+  const { data: allVotes, error: _allVoteError } = await supabase
+    .from("new_votes")
+    .select("vote1, vote2, vote3")
+    .eq("vote_month", currentMonth);
+  const { error: _updateMonthsError } = await supabase
+    .from("Months")
+    .update({ is_voting_open: false })
+    .eq("name", currentMonth);
+
+  console.log(_updateMonthsError);
+  const voteScores = calculateVoteScores(allVotes!).sort(
+    (a: any, b: any) => b.score - a.score
+  );
+
+  const winner = voteScores[0].gameName;
+
+  return json({
+    type: 4,
+    data: {
+      content: `The winner of the vote for ${currentMonth} is ${winner}!`,
+    },
+  });
+};
+
 export const listGames = () => {
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
   return json({
@@ -57,6 +84,15 @@ export const listGames = () => {
 };
 
 export const nominateGame = async (command: any, member: any) => {
+  if (!isNominationsOpen) {
+    return json({
+      // Type 4 responds with the below message retaining the user's
+      type: 4,
+      data: {
+        content: `Nominations are currently closed for ${currentMonth}.`,
+      },
+    });
+  }
   const gameName = command.options.find(
     (option: { name: string; value: string }) => option.name === "game_name"
   );
@@ -87,13 +123,43 @@ export const nominateGame = async (command: any, member: any) => {
 export const handleVoting = async (data: any, member: any) => {
   // get game nominations for current month, and their record id
 
-  // map those an array of games with their name and record id
+  if (!isVotingOpen) {
+    return json({
+      type: 7,
+      data: {
+        content: `Voting is currently closed for ${currentMonth}. \n Get outta here, ${member.user.global_name}!`,
+      },
+    });
+  }
+
+  // Pull the user's existing votes from the database
+  const { data: existingVotes, error: _fetchError } = await supabase
+    .from("new_votes")
+    .select("vote1, vote2, vote3")
+    .eq("vote_id", member.user.username + currentMonth)
+    .single();
 
   if (data.custom_id === "vote_1_select") {
     // find the vote id of the game they voted for
     const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
+
+    // Check if this game is already selected for vote2 or vote3
+    if (
+      (existingVotes?.vote2 && existingVotes.vote2 === voteGameId) ||
+      (existingVotes?.vote3 && existingVotes.vote3 === voteGameId)
+    ) {
+      return json({
+        type: 4,
+        data: {
+          content:
+            "You can't vote for the same game more than once! Please select a different game.",
+          flags: 64, // Ephemeral flag - only visible to the user
+        },
+      });
+    }
+
     const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
@@ -116,7 +182,22 @@ export const handleVoting = async (data: any, member: any) => {
     const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    console.log(voteGameId);
+
+    // Check if this game is already selected for vote1 or vote3
+    if (
+      (existingVotes?.vote1 && existingVotes.vote1 === voteGameId) ||
+      (existingVotes?.vote3 && existingVotes.vote3 === voteGameId)
+    ) {
+      return json({
+        type: 4,
+        data: {
+          content:
+            "You can't vote for the same game more than once! Please select a different game.",
+          flags: 64, // Ephemeral flag - only visible to the user
+        },
+      });
+    }
+
     const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
@@ -138,7 +219,22 @@ export const handleVoting = async (data: any, member: any) => {
     const voteGameId = nominations!.find(
       (game: any) => game.Name === data.values[0]
     )!.record_id;
-    console.log(voteGameId);
+
+    // Check if this game is already selected for vote1 or vote2
+    if (
+      (existingVotes?.vote1 && existingVotes.vote1 === voteGameId) ||
+      (existingVotes?.vote2 && existingVotes.vote2 === voteGameId)
+    ) {
+      return json({
+        type: 4,
+        data: {
+          content:
+            "You can't vote for the same game more than once! Please select a different game.",
+          flags: 64, // Ephemeral flag - only visible to the user
+        },
+      });
+    }
+
     const { data: upsertObj, error: _error } = await supabase
       .from("new_votes")
       .upsert([
@@ -179,7 +275,13 @@ export const handleVoting = async (data: any, member: any) => {
   return json({ error: "bad component interaction" }, { status: 400 });
 };
 
-export const voteForGame = () => {
+export const voteForGame = async () => {
+  // close nominations for current month
+  await supabase
+    .from("Months")
+    .update({ is_noms_open: false })
+    .eq("name", currentMonth);
+
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
   const gameOptions = nominatedGameNames.map((gameName: string) => ({
     label: gameName,
