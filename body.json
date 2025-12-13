@@ -1,79 +1,113 @@
 {
-  "app_permissions": "533235326508609",
+  "app_permissions": "2222085186772545",
   "application_id": "1156326644089356360",
+  "attachment_size_limit": 524288000,
+  "authorizing_integration_owners": { "0": "544729376554614794" },
   "channel": {
     "flags": 0,
     "guild_id": "544729376554614794",
     "icon_emoji": { "id": null, "name": "🎮" },
     "id": "1156401209134022706",
-    "last_message_id": "1158089285292003500",
+    "last_message_id": "1449494569656914124",
     "name": "gamer-club-dev",
     "nsfw": false,
-    "parent_id": "677196264378597412",
-    "permissions": "562949953421311",
-    "position": 44,
+    "parent_id": "692072956070723595",
+    "permissions": "9007199254740991",
+    "position": 1,
     "rate_limit_per_user": 0,
     "theme_color": null,
     "topic": null,
     "type": 0
   },
   "channel_id": "1156401209134022706",
-  "data": { "component_type": 2, "custom_id": "vote_submit" },
+  "context": 0,
+  "data": { "component_type": 2, "custom_id": "vote_submit", "id": 8 },
   "entitlement_sku_ids": [],
   "entitlements": [],
   "guild": {
     "features": [
-      "CHANNEL_ICON_EMOJIS_GENERATED",
-      "MEMBER_PROFILES",
-      "BANNER",
-      "SOUNDBOARD",
-      "GUESTS_ENABLED",
       "ROLE_ICONS",
-      "THREE_DAY_THREAD_ARCHIVE",
-      "SEVEN_DAY_THREAD_ARCHIVE",
-      "PRIVATE_THREADS",
+      "ANIMATED_ICON",
+      "VIDEO_BITRATE_ENHANCED",
+      "STAGE_CHANNEL_VIEWERS_50",
+      "SOUNDBOARD",
+      "STAGE_CHANNEL_VIEWERS_150",
+      "GUESTS_ENABLED",
       "INVITE_SPLASH",
-      "ANIMATED_ICON"
+      "CHANNEL_ICON_EMOJIS_GENERATED",
+      "TIERLESS_BOOSTING_SYSTEM_MESSAGE",
+      "AUTO_MODERATION",
+      "VIDEO_QUALITY_1080_60FPS",
+      "AUDIO_BITRATE_256_KBPS",
+      "MAX_FILE_SIZE_50_MB",
+      "VIDEO_QUALITY_720_60FPS",
+      "ENABLED_MODERATION_EXPERIENCE_FOR_NON_COMMUNITY",
+      "BANNER",
+      "NON_COMMUNITY_RAID_ALERTS",
+      "TIERLESS_BOOSTING",
+      "AUDIO_BITRATE_128_KBPS"
     ],
     "id": "544729376554614794",
     "locale": "en-US"
   },
   "guild_id": "544729376554614794",
   "guild_locale": "en-US",
-  "id": "1158089351532658788",
+  "id": "1449502448631808240",
   "locale": "en-US",
   "member": {
     "avatar": null,
+    "banner": null,
+    "collectibles": null,
     "communication_disabled_until": null,
     "deaf": false,
+    "display_name_styles": {
+      "colors": [11080677],
+      "effect_id": 5,
+      "font_id": 8
+    },
     "flags": 0,
     "joined_at": "2019-02-12T04:00:09.790000+00:00",
     "mute": false,
-    "nick": "Turbuster-of-ghosts",
+    "nick": "TurbabyItsColdOutside",
     "pending": false,
-    "permissions": "562949953421311",
-    "premium_since": "2019-12-02T13:47:13.181000+00:00",
+    "permissions": "9007199254740991",
+    "premium_since": "2025-06-27T00:56:14.479000+00:00",
     "roles": [
       "640705195315167265",
       "651056783267201026",
       "648388020764147713",
       "651564201478848570",
       "766481689354436648",
-      "690783754196746250",
       "621830313286565900",
       "689870838102753361",
+      "1210042159470870609",
       "643522015676071956",
       "672175262477189145",
       "925072020792836186",
-      "697250696394702939"
+      "697250696394702939",
+      "896553401599557694"
     ],
     "unusual_dm_activity_until": null,
     "user": {
       "avatar": "b2907f036ad5780ed87dbdcb6003fc0c",
       "avatar_decoration_data": null,
+      "clan": {
+        "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+        "identity_enabled": true,
+        "identity_guild_id": "114786249750872069",
+        "tag": "PEAK"
+      },
+      "collectibles": null,
       "discriminator": "0",
+      "display_name_styles": null,
       "global_name": "Turbo",
       "id": "204791706565083136",
+      "primary_guild": {
+        "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+        "identity_enabled": true,
+        "identity_guild_id": "114786249750872069",
+        "tag": "PEAK"
+      },
       "public_flags": 0,
       "username": "turbo_puns"
     }
@@ -82,12 +116,16 @@
     "application_id": "1156326644089356360",
     "attachments": [],
     "author": {
-      "avatar": null,
+      "avatar": "eaef5799127f03f8d575ca0d2c394d6d",
       "avatar_decoration_data": null,
       "bot": true,
+      "clan": null,
+      "collectibles": null,
       "discriminator": "4443",
+      "display_name_styles": null,
       "global_name": null,
       "id": "1156326644089356360",
+      "primary_guild": null,
       "public_flags": 524288,
       "username": "Gamer Club"
     },
@@ -97,131 +135,258 @@
         "components": [
           {
             "custom_id": "vote_1_select",
+            "id": 2,
             "max_values": 1,
             "min_values": 1,
             "options": [
               {
                 "description": "Vote for this as your top game!",
-                "label": "Test game2",
-                "value": "Test game2"
+                "label": "Arc Raiders",
+                "value": "Arc Raiders"
               },
               {
                 "description": "Vote for this as your top game!",
-                "label": "embed test",
-                "value": "embed test"
+                "label": "Demonschool",
+                "value": "Demonschool"
               },
               {
                 "description": "Vote for this as your top game!",
-                "label": "ricky rolls",
-                "value": "ricky rolls"
+                "label": "Dispatch",
+                "value": "Dispatch"
               },
               {
                 "description": "Vote for this as your top game!",
-                "label": "gomey game",
-                "value": "gomey game"
+                "label": "Where Winds Meet",
+                "value": "Where Winds Meet"
+              },
+              {
+                "description": "Vote for this as your top game!",
+                "label": "Unbeatable",
+                "value": "Unbeatable"
+              },
+              {
+                "description": "Vote for this as your top game!",
+                "label": "Cleared Hot",
+                "value": "Cleared Hot"
+              },
+              {
+                "description": "Vote for this as your top game!",
+                "label": "Pillars of Eternity",
+                "value": "Pillars of Eternity"
+              },
+              {
+                "description": "Vote for this as your top game!",
+                "label": "morsels",
+                "value": "morsels"
+              },
+              {
+                "description": "Vote for this as your top game!",
+                "label": "Keep Driving",
+                "value": "Keep Driving"
               }
             ],
             "placeholder": "Select your top choice",
             "type": 3
           }
         ],
+        "id": 1,
         "type": 1
       },
       {
         "components": [
           {
             "custom_id": "vote_2_select",
+            "id": 4,
             "max_values": 1,
             "min_values": 1,
             "options": [
               {
                 "description": "Vote for this a your second game!",
-                "label": "Test game2",
-                "value": "Test game2"
+                "label": "Arc Raiders",
+                "value": "Arc Raiders"
               },
               {
                 "description": "Vote for this a your second game!",
-                "label": "embed test",
-                "value": "embed test"
+                "label": "Demonschool",
+                "value": "Demonschool"
               },
               {
                 "description": "Vote for this a your second game!",
-                "label": "ricky rolls",
-                "value": "ricky rolls"
+                "label": "Dispatch",
+                "value": "Dispatch"
               },
               {
                 "description": "Vote for this a your second game!",
-                "label": "gomey game",
-                "value": "gomey game"
+                "label": "Where Winds Meet",
+                "value": "Where Winds Meet"
+              },
+              {
+                "description": "Vote for this a your second game!",
+                "label": "Unbeatable",
+                "value": "Unbeatable"
+              },
+              {
+                "description": "Vote for this a your second game!",
+                "label": "Cleared Hot",
+                "value": "Cleared Hot"
+              },
+              {
+                "description": "Vote for this a your second game!",
+                "label": "Pillars of Eternity",
+                "value": "Pillars of Eternity"
+              },
+              {
+                "description": "Vote for this a your second game!",
+                "label": "morsels",
+                "value": "morsels"
+              },
+              {
+                "description": "Vote for this a your second game!",
+                "label": "Keep Driving",
+                "value": "Keep Driving"
               }
             ],
             "placeholder": "Select your second choice",
             "type": 3
           }
         ],
+        "id": 3,
         "type": 1
       },
       {
         "components": [
           {
             "custom_id": "vote_3_select",
+            "id": 6,
             "max_values": 1,
             "min_values": 1,
             "options": [
               {
                 "description": "Vote for this as your third game!",
-                "label": "Test game2",
-                "value": "Test game2"
+                "label": "Arc Raiders",
+                "value": "Arc Raiders"
               },
               {
                 "description": "Vote for this as your third game!",
-                "label": "embed test",
-                "value": "embed test"
+                "label": "Demonschool",
+                "value": "Demonschool"
               },
               {
                 "description": "Vote for this as your third game!",
-                "label": "ricky rolls",
-                "value": "ricky rolls"
+                "label": "Dispatch",
+                "value": "Dispatch"
               },
               {
                 "description": "Vote for this as your third game!",
-                "label": "gomey game",
-                "value": "gomey game"
+                "label": "Where Winds Meet",
+                "value": "Where Winds Meet"
+              },
+              {
+                "description": "Vote for this as your third game!",
+                "label": "Unbeatable",
+                "value": "Unbeatable"
+              },
+              {
+                "description": "Vote for this as your third game!",
+                "label": "Cleared Hot",
+                "value": "Cleared Hot"
+              },
+              {
+                "description": "Vote for this as your third game!",
+                "label": "Pillars of Eternity",
+                "value": "Pillars of Eternity"
+              },
+              {
+                "description": "Vote for this as your third game!",
+                "label": "morsels",
+                "value": "morsels"
+              },
+              {
+                "description": "Vote for this as your third game!",
+                "label": "Keep Driving",
+                "value": "Keep Driving"
               }
             ],
             "placeholder": "Select your third choice",
             "type": 3
           }
         ],
+        "id": 5,
         "type": 1
       },
       {
         "components": [
           {
             "custom_id": "vote_submit",
+            "id": 8,
             "label": "Submit Votes",
             "style": 1,
             "type": 2
           }
         ],
+        "id": 7,
         "type": 1
       }
     ],
-    "content": "Vote for your top games!",
-    "edited_timestamp": null,
+    "content": "Thanks for voting, Turbo! \n Here are the current vote scores: \n\n19: Dispatch\n13: Arc Raiders\n9: Unbeatable\n6: Keep Driving\n5: Where Winds Meet\n5: Cleared Hot\n5: Pillars of Eternity\n5: morsels\n4: Demonschool\n          \n You can update your choices at any time before voting closes.",
+    "edited_timestamp": "2025-12-13T20:34:51.186000+00:00",
     "embeds": [],
     "flags": 0,
-    "id": "1158089285292003500",
+    "id": "1449494569656914124",
     "interaction": {
-      "id": "1158089282326638723",
+      "id": "1449494564976070810",
       "name": "vote",
       "type": 2,
       "user": {
         "avatar": "b2907f036ad5780ed87dbdcb6003fc0c",
         "avatar_decoration_data": null,
+        "clan": {
+          "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+          "identity_enabled": true,
+          "identity_guild_id": "114786249750872069",
+          "tag": "PEAK"
+        },
+        "collectibles": null,
         "discriminator": "0",
+        "display_name_styles": null,
         "global_name": "Turbo",
         "id": "204791706565083136",
+        "primary_guild": {
+          "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+          "identity_enabled": true,
+          "identity_guild_id": "114786249750872069",
+          "tag": "PEAK"
+        },
+        "public_flags": 0,
+        "username": "turbo_puns"
+      }
+    },
+    "interaction_metadata": {
+      "authorizing_integration_owners": { "0": "544729376554614794" },
+      "command_type": 1,
+      "id": "1449494564976070810",
+      "name": "vote",
+      "type": 2,
+      "user": {
+        "avatar": "b2907f036ad5780ed87dbdcb6003fc0c",
+        "avatar_decoration_data": null,
+        "clan": {
+          "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+          "identity_enabled": true,
+          "identity_guild_id": "114786249750872069",
+          "tag": "PEAK"
+        },
+        "collectibles": null,
+        "discriminator": "0",
+        "display_name_styles": null,
+        "global_name": "Turbo",
+        "id": "204791706565083136",
+        "primary_guild": {
+          "badge": "ec39e62858efecf8046c1b19b76e1ba2",
+          "identity_enabled": true,
+          "identity_guild_id": "114786249750872069",
+          "tag": "PEAK"
+        },
         "public_flags": 0,
         "username": "turbo_puns"
       }
@@ -230,12 +395,13 @@
     "mention_roles": [],
     "mentions": [],
     "pinned": false,
-    "timestamp": "2023-10-01T17:13:21.872000+00:00",
+    "position": 0,
+    "timestamp": "2025-12-13T20:13:55.713000+00:00",
     "tts": false,
     "type": 20,
     "webhook_id": "1156326644089356360"
   },
-  "token": "aW50ZXJhY3Rpb246MTE1ODA4OTM1MTUzMjY1ODc4ODpOQ2o4ZTI2RWFiQ1ljQ2pVMXVYd2I1SXNnMWp6QkNTSHNGTXVmN3FRR2hIOWRkeGZGUkZ2OER3UVR0Y0REd3NVOGZRTHp4eXpLQ0tqbmEybmZsWDFuUThoUmpGdXVqYkoxd01qcWdPSkJZMzg3Z2hVZlVINlFzSVowNTl0S2toNA",
+  "token": "aW50ZXJhY3Rpb246MTQ0OTUwMjQ0ODYzMTgwODI0MDpNeG9ZWlJHYjNXZm5TYnZPQ3lnNElPeHMycFRoRkF1SWk1UlFpOTRxQm1xT0NKUWU2NHFYenZlWmh6bjBWVG42VkxaQVVpSGNjbFN4blVWa3lUc0tIc2JBVTFwN3lqUnVEOUFtMnhuZTRtOThmc01FYmZsUHBMZEhSNGE5VThrSw",
   "type": 3,
   "version": 1
 }

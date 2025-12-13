@@ -11,6 +11,7 @@ import {
   nominateGame,
   vetoGame,
   voteForGame,
+  endVote,
 } from "../_shared/commands.ts";
 import { adminWrapper } from "../_shared/auth.ts";
 
@@ -71,16 +72,19 @@ async function home(request: Request) {
     }
     if (data.name === "vote") {
       console.log("user: " + member.user.username);
-      const voteCommand = adminWrapper(member.user.username, voteForGame)
-      return (await voteCommand)()
+      const voteCommand = adminWrapper(member.user.username, voteForGame);
+      return (await voteCommand)();
     }
     if (data.name === "veto") {
       console.log("user: " + member.user.username);
-      const vetoCommand = adminWrapper(member.user.username, vetoGame)
-      return (await vetoCommand)(data, member)
+      const vetoCommand = adminWrapper(member.user.username, vetoGame);
+      return (await vetoCommand)(data, member);
     }
     if (data.name === "gc-games") {
       return await listGames();
+    }
+    if (data.name === "end-vote") {
+      return await endVote();
     }
   }
 
