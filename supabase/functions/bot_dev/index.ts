@@ -12,6 +12,7 @@ import {
   vetoGame,
   voteForGame,
   endVote,
+  myGcVotes,
 } from "../_shared/commands.ts";
 import { adminWrapper } from "../_shared/auth.ts";
 
@@ -84,7 +85,11 @@ async function home(request: Request) {
       return await listGames();
     }
     if (data.name === "end-vote") {
-      return await endVote();
+      const endVoteCommand = adminWrapper(member.user.username, endVote);
+      return (await endVoteCommand)();
+    }
+    if (data.name === "my-gc-votes") {
+      return await myGcVotes(member);
     }
   }
 

@@ -127,7 +127,7 @@ export const handleVoting = async (data: any, member: any) => {
     return json({
       type: 7,
       data: {
-        content: `Voting is currently closed for ${currentMonth}. \n Get outta here, ${member.user.global_name}!`,
+        content: `Voting is currently closed for ${currentMonth}. \n\n Get outta here, ${member.user.global_name}!`,
       },
     });
   }
@@ -268,7 +268,7 @@ export const handleVoting = async (data: any, member: any) => {
         }! \n Here are the current vote scores: \n\n${voteScores
           .map((vote) => vote.score + ": " + vote.gameName)
           .join("\n")}
-          \n Remember, choosing a game in a dropdown records that vote, but you can change it at any time.`,
+          \n You can vote change your votes at any time before voting closes. Use /my-gc-votes to see your current votes.`,
       },
     });
   }
@@ -398,6 +398,53 @@ export const vetoGame = async (command: any, member: any) => {
     type: 4,
     data: {
       content: message,
+    },
+  });
+};
+
+export const myGcVotes = async (member: any) => {
+  // Fetch the user's votes for the current month
+  const { data: userVotes, error: _fetchError } = await supabase
+    .from("new_votes")
+    .select("vote1, vote2, vote3")
+    .eq("vote_id", member.user.username + currentMonth)
+    .single();
+
+  if (
+    !userVotes ||
+    (!userVotes.vote1 && !userVotes.vote2 && !userVotes.vote3)
+  ) {
+    return json({
+      type: 4,
+      data: {
+        content: `You haven't cast any votes for ${currentMonth} yet!`,
+        flags: 64, // Ephemeral flag - only visible to the user
+      },
+    });
+  }
+
+  // Get the game names for the votes
+  const vote1Game = userVotes.vote1
+    ? nominations!.find((game: any) => game.record_id === userVotes.vote1)?.Name
+    : null;
+  const vote2Game = userVotes.vote2
+    ? nominations!.find((game: any) => game.record_id === userVotes.vote2)?.Name
+    : null;
+  const vote3Game = userVotes.vote3
+    ? nominations!.find((game: any) => game.record_id === userVotes.vote3)?.Name
+    : null;
+
+  // Build the message
+  let message = `Here are your votes for ${currentMonth}:\n\n`;
+  if (vote1Game) message += `**1st Choice (3 points):** ${vote1Game}\n`;
+  if (vote2Game) message += `**2nd Choice (2 points):** ${vote2Game}\n`;
+  if (vote3Game) message += `**3rd Choice (1 point):** ${vote3Game}\n`;
+
+  return json({
+    type: 4,
+    data: {
+      content: message,
+      flags: 64, // Ephemeral flag - only visible to the user
     },
   });
 };
