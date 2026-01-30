@@ -279,7 +279,7 @@ export const voteForGame = async () => {
   // close nominations for current month
   await supabase
     .from("Months")
-    .update({ is_noms_open: false })
+    .update({ is_noms_open: false, is_voting_open: true })
     .eq("name", currentMonth);
 
   const nominatedGameNames = nominations!.map((game: any) => game.Name);
