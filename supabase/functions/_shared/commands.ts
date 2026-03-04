@@ -4,7 +4,7 @@ import { createClient } from "supabase";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_ANON_KEY")!
+  Deno.env.get("SUPABASE_ANON_KEY")!,
 );
 
 const { data: monthData, error: _monthError } = await supabase
@@ -56,7 +56,7 @@ export const endVote = async () => {
 
   console.log(_updateMonthsError);
   const voteScores = calculateVoteScores(allVotes!).sort(
-    (a: any, b: any) => b.score - a.score
+    (a: any, b: any) => b.score - a.score,
   );
 
   const winner = voteScores[0].gameName;
@@ -77,7 +77,7 @@ export const listGames = () => {
     type: 4,
     data: {
       content: `Here are the games nominated for ${currentMonth}: \n ${nominatedGameNames.join(
-        ", \n"
+        ", \n",
       )}`,
     },
   });
@@ -94,10 +94,10 @@ export const nominateGame = async (command: any, member: any) => {
     });
   }
   const gameName = command.options.find(
-    (option: { name: string; value: string }) => option.name === "game_name"
+    (option: { name: string; value: string }) => option.name === "game_name",
   );
   const trailer = command.options.find(
-    (option: { name: string; value: string }) => option.name === "trailer"
+    (option: { name: string; value: string }) => option.name === "trailer",
   );
 
   let message = `${member.user.global_name} has nominated ${gameName.value} for ${currentMonth}!`;
@@ -132,23 +132,24 @@ export const handleVoting = async (data: any, member: any) => {
     });
   }
 
-  // Pull the user's existing votes from the database
+  // Pull the user's existing temp votes from the database
   const { data: existingVotes, error: _fetchError } = await supabase
     .from("new_votes")
-    .select("vote1, vote2, vote3")
+    .select("temp_vote_1, temp_vote_2, temp_vote_3")
     .eq("vote_id", member.user.username + currentMonth)
     .single();
 
   if (data.custom_id === "vote_1_select") {
     // find the vote id of the game they voted for
     const voteGameId = nominations!.find(
-      (game: any) => game.Name === data.values[0]
+      (game: any) => game.Name === data.values[0],
     )!.record_id;
 
-    // Check if this game is already selected for vote2 or vote3
+    // Check if this game is already selected for temp_vote_2 or temp_vote_3
     if (
-      (existingVotes?.vote2 && existingVotes.vote2 === voteGameId) ||
-      (existingVotes?.vote3 && existingVotes.vote3 === voteGameId)
+      (existingVotes?.temp_vote_2 &&
+        existingVotes.temp_vote_2 === voteGameId) ||
+      (existingVotes?.temp_vote_3 && existingVotes.temp_vote_3 === voteGameId)
     ) {
       return json({
         type: 4,
@@ -165,7 +166,7 @@ export const handleVoting = async (data: any, member: any) => {
       .upsert([
         {
           discord_user: member.user.username,
-          vote1: voteGameId,
+          temp_vote_1: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -180,13 +181,14 @@ export const handleVoting = async (data: any, member: any) => {
   if (data.custom_id === "vote_2_select") {
     // find the vote id of the game they voted for
     const voteGameId = nominations!.find(
-      (game: any) => game.Name === data.values[0]
+      (game: any) => game.Name === data.values[0],
     )!.record_id;
 
-    // Check if this game is already selected for vote1 or vote3
+    // Check if this game is already selected for temp_vote_1 or temp_vote_3
     if (
-      (existingVotes?.vote1 && existingVotes.vote1 === voteGameId) ||
-      (existingVotes?.vote3 && existingVotes.vote3 === voteGameId)
+      (existingVotes?.temp_vote_1 &&
+        existingVotes.temp_vote_1 === voteGameId) ||
+      (existingVotes?.temp_vote_3 && existingVotes.temp_vote_3 === voteGameId)
     ) {
       return json({
         type: 4,
@@ -203,7 +205,7 @@ export const handleVoting = async (data: any, member: any) => {
       .upsert([
         {
           discord_user: member.user.username,
-          vote2: voteGameId,
+          temp_vote_2: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -217,13 +219,14 @@ export const handleVoting = async (data: any, member: any) => {
   if (data.custom_id === "vote_3_select") {
     // find the vote id of the game they voted for
     const voteGameId = nominations!.find(
-      (game: any) => game.Name === data.values[0]
+      (game: any) => game.Name === data.values[0],
     )!.record_id;
 
-    // Check if this game is already selected for vote1 or vote2
+    // Check if this game is already selected for temp_vote_1 or temp_vote_2
     if (
-      (existingVotes?.vote1 && existingVotes.vote1 === voteGameId) ||
-      (existingVotes?.vote2 && existingVotes.vote2 === voteGameId)
+      (existingVotes?.temp_vote_1 &&
+        existingVotes.temp_vote_1 === voteGameId) ||
+      (existingVotes?.temp_vote_2 && existingVotes.temp_vote_2 === voteGameId)
     ) {
       return json({
         type: 4,
@@ -240,7 +243,7 @@ export const handleVoting = async (data: any, member: any) => {
       .upsert([
         {
           discord_user: member.user.username,
-          vote3: voteGameId,
+          temp_vote_3: voteGameId,
           vote_id: member.user.username + currentMonth,
           vote_month: currentMonth,
         },
@@ -252,12 +255,83 @@ export const handleVoting = async (data: any, member: any) => {
     });
   }
   if (data.custom_id === "vote_submit") {
+    // Fetch the user's temp votes and existing final votes together
+    const { data: userVotes, error: _tempFetchError } = await supabase
+      .from("new_votes")
+      .select("temp_vote_1, temp_vote_2, temp_vote_3, vote1, vote2, vote3")
+      .eq("vote_id", member.user.username + currentMonth)
+      .single();
+
+    if (
+      !userVotes ||
+      (!userVotes.temp_vote_1 &&
+        !userVotes.temp_vote_2 &&
+        !userVotes.temp_vote_3)
+    ) {
+      return json({
+        type: 4,
+        data: {
+          content:
+            "You haven't selected any games yet! Use the dropdowns above to make your selections before submitting.",
+          flags: 64,
+        },
+      });
+    }
+
+    // Merge: temp votes override existing final votes where set
+    const newVote1 = userVotes.temp_vote_1 ?? userVotes.vote1;
+    const newVote2 = userVotes.temp_vote_2 ?? userVotes.vote2;
+    const newVote3 = userVotes.temp_vote_3 ?? userVotes.vote3;
+
+    // Check for duplicates in the merged result
+    const submittedVotes = [newVote1, newVote2, newVote3].filter(Boolean);
+    if (new Set(submittedVotes).size < submittedVotes.length) {
+      const vote1Name = newVote1
+        ? nominations!.find((g: any) => g.record_id === newVote1)?.Name
+        : null;
+      const vote2Name = newVote2
+        ? nominations!.find((g: any) => g.record_id === newVote2)?.Name
+        : null;
+      const vote3Name = newVote3
+        ? nominations!.find((g: any) => g.record_id === newVote3)?.Name
+        : null;
+
+      let currentVotesMsg = "";
+      if (vote1Name) currentVotesMsg += `\n**1st Choice:** ${vote1Name}`;
+      if (vote2Name) currentVotesMsg += `\n**2nd Choice:** ${vote2Name}`;
+      if (vote3Name) currentVotesMsg += `\n**3rd Choice:** ${vote3Name}`;
+
+      return json({
+        type: 4,
+        data: {
+          content: `Submitting would result in a duplicate vote! Please update your dropdowns to fix the conflict.\n\nYour current selections would be:${currentVotesMsg}`,
+          flags: 64,
+        },
+      });
+    }
+
+    // Copy merged votes to final vote fields and clear temp votes
+    await supabase.from("new_votes").upsert([
+      {
+        discord_user: member.user.username,
+        vote_id: member.user.username + currentMonth,
+        vote_month: currentMonth,
+        vote1: newVote1,
+        vote2: newVote2,
+        vote3: newVote3,
+        temp_vote_1: null,
+        temp_vote_2: null,
+        temp_vote_3: null,
+      },
+    ]);
+
+    // Fetch all votes to show current scores
     const { data: allVotes, error: _allVoteError } = await supabase
       .from("new_votes")
       .select("vote1, vote2, vote3")
       .eq("vote_month", currentMonth);
     const voteScores = calculateVoteScores(allVotes!).sort(
-      (a: any, b: any) => b.score - a.score
+      (a: any, b: any) => b.score - a.score,
     );
 
     return json({
@@ -268,7 +342,7 @@ export const handleVoting = async (data: any, member: any) => {
         }! \n Here are the current vote scores: \n\n${voteScores
           .map((vote) => vote.score + ": " + vote.gameName)
           .join("\n")}
-          \n You can vote change your votes at any time before voting closes. Use /my-gc-votes to see your current votes.`,
+          \n You can change your votes at any time before voting closes. Use /my-gc-votes to see your current votes.`,
       },
     });
   }
@@ -303,6 +377,7 @@ export const voteForGame = async () => {
 
   // console.log(gameOptions);
   console.log("There are " + gameOptions.length + " games to vote for.");
+  console.log("Game options: " + JSON.stringify(gameOptions));
   return json({
     // Type 4 responds with the below message retaining the user's
     // input at the top.
@@ -310,7 +385,7 @@ export const voteForGame = async () => {
 
     data: {
       content:
-        "Vote for your top games! \n Remember, choosing a game in a dropdown records that vote, but you can change it at any time.",
+        "Vote for your top 3 games! \n Select a game in each dropdown, then hit **Submit Votes** to lock them in. You can change your selections and re-submit at any time before voting closes.",
       components: [
         {
           type: 1,
@@ -352,7 +427,7 @@ export const voteForGame = async () => {
               type: 2,
               style: 1,
               custom_id: "vote_submit",
-              label: "Update Vote Scores",
+              label: "Submit Votes",
             },
           ],
         },
@@ -363,7 +438,7 @@ export const voteForGame = async () => {
 
 export const vetoGame = async (command: any, member: any) => {
   const gameName = command.options.find(
-    (option: { name: string; value: string }) => option.name === "game_name"
+    (option: { name: string; value: string }) => option.name === "game_name",
   );
 
   const message = `${member.user.global_name} has vetoed ${gameName.value} for ${currentMonth}!`;
